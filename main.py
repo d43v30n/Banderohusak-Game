@@ -1,4 +1,5 @@
 import pygame
+import os
 import random
 from pygame.constants import QUIT, K_DOWN, K_LEFT, K_UP, K_RIGHT, K_ESCAPE
 
@@ -19,6 +20,8 @@ SIZE_ENEMY = (60, 30)
 SIZE_BONUS = (40, 100)
 COLOR_BG = (0, 0, 0)
 
+IMAGE_PATH = "Goose"
+PLAYER_IMAGES = os.listdir(IMAGE_PATH)
 main_display = pygame.display.set_mode((WIDTH, HEIGHT))
 
 bg = pygame.transform.scale(pygame.image.load('background.png'),
@@ -38,7 +41,7 @@ player_move_right = [4, 0]
 
 
 class EnemyClass:
-    def init(self):
+    def __init__(self):
         self.event = pygame.USEREVENT + 1
         pygame.time.set_timer(self.event, 1500)
         self.count = []
@@ -54,7 +57,7 @@ class EnemyClass:
 
 
 class BonusClass:
-    def init(self):
+    def __init__(self):
         self.event = pygame.USEREVENT + 2
         pygame.time.set_timer(self.event, 3000)
         self.count = []
@@ -68,6 +71,10 @@ class BonusClass:
         bonus_move = [0, random.randint(4, 8)]
         return [bonus, bonus_rect, bonus_move]
 
+
+CHANGE_IMAGE = pygame.USEREVENT + 3
+pygame.time.set_timer(CHANGE_IMAGE, 250)
+image_index = 0
 
 score = 0
 
@@ -85,6 +92,12 @@ while playing:
             freshenemy.count.append(freshenemy.create_enemy())
         if event.type == freshbonus.event:
             freshbonus.count.append(freshbonus.create_bonus())
+        if event.type == CHANGE_IMAGE:
+            player = pygame.image.load(
+                os.path.join(IMAGE_PATH, PLAYER_IMAGES[image_index]))
+            image_index += 1
+            if image_index >= len(PLAYER_IMAGES):
+                image_index = 0
 
     keys = pygame.key.get_pressed()
 
